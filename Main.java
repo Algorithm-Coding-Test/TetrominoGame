@@ -1,54 +1,9 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
-	public static class Tetromino{
-		ArrayList<Integer> value;
-		boolean isFull;
-		int sumOfValue;
-		ArrayList<String> points;
-		
-		public Tetromino(int x, int y) {
-			this.value = new ArrayList<>();
-			this.points = new ArrayList<>();
-			this.points.add(x+"/"+y);
-
-			isFull = false;
-			sumOfValue = 0;
-		}
-		public Tetromino(int x, int y, int newValue) {
-			this.value = new ArrayList<>();
-			this.value.add(newValue);
-			this.points = new ArrayList<>();
-			this.points.add(x+"/"+y);
-			
-			isFull = false;
-			sumOfValue = newValue;
-		}
-		public Tetromino(Tetromino oldTetromino) {
-			this.value = new ArrayList<>();
-			for(int i= 0;i<oldTetromino.value.size();i++) {
-				value.add(oldTetromino.value.get(i));
-			}
-			this.points = new ArrayList<>();
-			for(int i= 0;i<oldTetromino.points.size();i++) {
-				points.add(oldTetromino.points.get(i));
-			}
-			this.sumOfValue = oldTetromino.sumOfValue;
-			this.isFull = oldTetromino.isFull;
-		}
-		public Tetromino addValue(int newValue, int x, int y) {
-			if(value.size() < 3) {
-				value.add(newValue);
-			}else {
-				value.add(newValue);
-				isFull = true;
-			}
-			points.add(x+"/"+y);
-			sumOfValue += newValue;
-			return this;
-		}
-	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner scan = new Scanner(System.in);
@@ -56,11 +11,11 @@ public class Main {
 		int N = scan.nextInt();
 		int M = scan.nextInt();
 		
-		int[][] board = new int[N][M];
+		int[][] board = new int[N+4][M+4];
 		
 		scan.nextLine();
-		for (int i = 0 ;i < N;i ++) {
-			for(int j = 0 ;j < M;j ++) {
+		for (int i = 1 ;i < N + 1;i ++) {
+			for(int j = 1 ;j < M + 1;j ++) {
 				board[i][j] = scan.nextInt();
 			}
 			scan.nextLine();
@@ -70,54 +25,37 @@ public class Main {
 	}
 	public static int findMaxTetromino(int N, int M, int[][] board) {
 		int maxValue = 0;
-		Tetromino newTetromino;
-		Tetromino tetromino;
+		int tempMaxValue;
 		
-		ArrayList<Tetromino> possibleTetromino;
-		int tempX; int tempY;
-		for(int i = 0;i < N;i ++) {
-			for(int j = 0; j < M; j++) {
+		ArrayList<Integer> tempValue;
+		for(int i = 1; i < N + 1; i++) {
+			for(int j = 1; j < M + 1; j++) {
+				tempValue = new ArrayList<>();
+				//Blue Tetromino
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+2][j] + board[i+3][j]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i][j+2] + board[i][j+3]);
+				//Yellow Tetromino
+				tempValue.add(board[i][j] + board[i+1][j] + board[i][j+1] + board[i+1][j+1]);
+				//Orange Tetromino
+				tempValue.add(board[i][j] + board[i][j+1] + board[i][j+2] + board[i+1][j+2]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i][j+2] + board[i-1][j+2]);
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+2][j] + board[i][j+1]);
+				tempValue.add(board[i][j] + board[i+1][j+1] + board[i+2][j+1] + board[i][j+1]);
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+2][j] + board[i+2][j+1]);
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+2][j] + board[i+2][j-1]);
+				//Green Tetromino
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+1][j+1] + board[i+2][j+1]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i-1][j+1] + board[i+1][j]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i+1][j] + board[i+1][j-1]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i+1][j+1] + board[i+1][j+2]);
+				//Purple Tetromino
+				tempValue.add(board[i][j] + board[i][j+1] + board[i-1][j+1] + board[i][j+2]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i+1][j+1] + board[i][j+2]);
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+1][j+1] + board[i+2][j]);
+				tempValue.add(board[i][j] + board[i][j+1] + board[i-1][j+1] + board[i+1][j+1]);
 				
-				possibleTetromino = new ArrayList<>();
-				possibleTetromino.add(new Tetromino(i, j, board[i][j]));
-				
-				while(!possibleTetromino.isEmpty()) {
-					
-					tetromino = possibleTetromino.get(0);
-					if(!tetromino.isFull) {
-						
-						for(int k = 0;k<tetromino.points.size();k++) {
-							
-							tempX = Integer.parseInt(tetromino.points.get(k).split("/")[0]);
-							tempY = Integer.parseInt(tetromino.points.get(k).split("/")[1]);
-							
-							newTetromino = new Tetromino(tetromino);
-							if(tempX+1 < N && !newTetromino.points.contains((tempX+1)+"/"+tempY)) {
-								newTetromino.addValue(board[tempX+1][tempY], tempX+1, tempY);							
-								possibleTetromino.add(newTetromino);
-							}
-							newTetromino = new Tetromino(tetromino);
-							if(tempX-1 >= 0 && !newTetromino.points.contains((tempX-1)+"/"+tempY)) {
-								newTetromino.addValue(board[tempX-1][tempY],tempX-1,tempY);
-								possibleTetromino.add(newTetromino);
-							}
-							newTetromino = new Tetromino(tetromino);
-							if(tempY+1 < M && !newTetromino.points.contains(tempX+"/"+(tempY+1))) {
-								newTetromino.addValue(board[tempX][tempY+1],tempX,tempY+1);
-								possibleTetromino.add(newTetromino);
-							}
-							newTetromino = new Tetromino(tetromino);
-							if(tempY-1 >= 0 && !newTetromino.points.contains(tempX+"/"+(tempY-1))) {
-								newTetromino.addValue(board[tempX][tempY-1], tempX, tempY-1);
-								possibleTetromino.add(newTetromino);
-							}
-
-						}
-					}else if(tetromino.sumOfValue > maxValue) maxValue = tetromino.sumOfValue;
-
-					possibleTetromino.remove(0);
-				}
-				
+				tempMaxValue = Collections.max(tempValue);
+				maxValue = (maxValue < tempMaxValue) ? tempMaxValue : maxValue;
 			}
 		}
 		return maxValue;
