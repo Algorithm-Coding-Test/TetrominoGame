@@ -38,7 +38,9 @@ public class Main {
 				tempValue.add(board[i][j] + board[i+1][j] + board[i][j+1] + board[i+1][j+1]);
 				//Orange Tetromino
 				tempValue.add(board[i][j] + board[i][j+1] + board[i][j+2] + board[i+1][j+2]);
+				tempValue.add(board[i][j] + board[i+1][j] + board[i][j+1] + board[i][j+2]);
 				tempValue.add(board[i][j] + board[i][j+1] + board[i][j+2] + board[i-1][j+2]);
+				tempValue.add(board[i][j] + board[i+1][j] + board[i+1][j+1] + board[i+1][j+2]);
 				tempValue.add(board[i][j] + board[i+1][j] + board[i+2][j] + board[i][j+1]);
 				tempValue.add(board[i][j] + board[i+1][j+1] + board[i+2][j+1] + board[i][j+1]);
 				tempValue.add(board[i][j] + board[i+1][j] + board[i+2][j] + board[i+2][j+1]);
